@@ -3,7 +3,6 @@ package manssonskij.tekfordjupning;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,12 +17,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Anton on 2016-12-06.
  */
 
-public class EmailPasswordActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -58,9 +59,7 @@ public class EmailPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_emailpassword);
-
+        setContentView(R.layout.activity_register);
 
         // Views
         // changed to AutoCompleteTextView from textinputedittext
@@ -68,7 +67,6 @@ public class EmailPasswordActivity extends AppCompatActivity {
         //mNameView = (TextInputEditText) findViewById(R.id.name);
         mNameView = (AutoCompleteTextView) findViewById(R.id.name);
         mPasswordView = (EditText) findViewById(R.id.password);
-
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         mAuth = FirebaseAuth.getInstance();
@@ -78,34 +76,15 @@ public class EmailPasswordActivity extends AppCompatActivity {
         findViewById(R.id.email_sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String email = mEmailView.getText().toString().trim();
-                String password = mPasswordView.getText().toString().trim();
-                /**
-                 * Check that values exist, code from:
-                 * http://www.androidhive.info/2016/06/android-getting-started-firebase-simple-login-registration-auth/
-                 */
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "You need to enter an email", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "You need to enter a password", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Minimum 6 characters!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
+                if (checkUserInput()) return;
                 createAccount();
             }
         });
-        findViewById(R.id.email_register_button).setOnClickListener(new View.OnClickListener(){
+
+        findViewById(R.id.email_register_button).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
+                if (checkUserInput()) return;
                 createAccount();
             }
         });
@@ -132,12 +111,12 @@ public class EmailPasswordActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -153,11 +132,6 @@ public class EmailPasswordActivity extends AppCompatActivity {
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
 
-
-
-
-
-
         progressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -170,17 +144,39 @@ public class EmailPasswordActivity extends AppCompatActivity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(EmailPasswordActivity.this, R.string.auth_failed,
+                            Toast.makeText(RegisterActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
 
                         } else {
-                            startActivity(new Intent(EmailPasswordActivity.this, ItemListScrollingActivity.class));
+
+                            writeUserCredentialsToDataBase();
+
+                            startActivity(new Intent(RegisterActivity.this, TaskListActivity.class));
                         }
 
                         // ...
                     }
                 });
 
+    }
+
+    private boolean writeUserCredentialsToDataBase() {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        try {
+            String email = mEmailView.getText().toString().trim();
+            String username = mNameView.getText().toString().trim();
+            String userId = username + "-testuser";
+
+            User user = new User(username, email);
+
+            mDatabase.child("users").child(userId).setValue(user);
+            //mDatabase.child("users").child(userId).setValue(user);
+            //mDatabase.child("task").child("task-test").setValue(userId);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     private void signIn() {
@@ -199,13 +195,37 @@ public class EmailPasswordActivity extends AppCompatActivity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(EmailPasswordActivity.this, R.string.auth_failed,
+                            Toast.makeText(RegisterActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
 
                         // ...
                     }
                 });
+    }
+
+    private boolean checkUserInput() {
+        String email = mEmailView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
+        /**
+         * Check that values exist, code from:
+         * http://www.androidhive.info/2016/06/android-getting-started-firebase-simple-login-registration-auth/
+         */
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "You need to enter an email", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "You need to enter a password", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(getApplicationContext(), "Minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
 }

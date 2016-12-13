@@ -26,14 +26,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EmailPasswordActivity"
+            android:name=".RegisterActivity"
             android:label="Create" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Unused_LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".ItemListScrollingActivity"
+            android:name=".TaskListActivity"
             android:label="@string/title_activity_item_list_scrolling"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddItemActivity"
+            android:label="@string/title_activity_add_item"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

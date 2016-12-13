@@ -11,33 +11,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="manssonskij.tekfordjupning.MainActivity"
-    tools:showIn="@layout/activity_main">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TeknikFördjupning" />
+    tools:showIn="@layout/activity_main"
+    >
 
     <Button
         android:text="Sign in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:id="@+id/loginButton"
-        style="?android:textAppearanceSmall" />
+        style="?android:textAppearanceSmall"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/mUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/teknikf_rdjupning"
+        android:layout_above="@+id/loginButton"
+        android:layout_alignParentStart="true" />
 
     <ImageView
         app:srcCompat="@drawable/auth"
         android:id="@+id/imageView"
         android:adjustViewBounds="false"
-        android:cropToPadding="false"
         android:baselineAlignBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_gravity="top|fill_horizontal"
+        android:cropToPadding="false"
+        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
 </RelativeLayout>
