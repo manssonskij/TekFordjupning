@@ -10,11 +10,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,8 +33,11 @@ import java.util.ArrayList;
 public class TaskListActivity extends AppCompatActivity {
 
     private static final String TAG = "TaskListActivity";
-    LinearLayout linearLayout;
+
     private DatabaseReference mDatabase;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +45,7 @@ public class TaskListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        linearLayout =(LinearLayout) findViewById(R.id.item_list_linear_layout);
+        //LinearLayout linearLayout = (LinearLayout) findViewById(R.id.item_list_linear_layout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -50,20 +56,15 @@ public class TaskListActivity extends AppCompatActivity {
         });
 
 
-
+        // init Firebase
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference("task").child(user.getUid());
 
         //  taskItem stuff
         final ArrayList<TaskItem> taskItemList = new ArrayList<TaskItem>();
-
         //ArrayAdapter<TaskItem> itemsAdapter = new ArrayAdapter<TaskItem>(this, R.layout.task_item, taskItemList);
         TaskItemArrayAdapter adapter = new TaskItemArrayAdapter(this, taskItemList);
-
-        // init Firebase
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-
-        mDatabase = FirebaseDatabase.getInstance().getReference("task").child(user.getUid());
-        // writeDatabase();
 
         // https://firebase.google.com/docs/database/android/read-and-write
 
@@ -71,14 +72,10 @@ public class TaskListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     TaskItem task = postSnapshot.getValue(TaskItem.class);
-                  //  addIssueView(task);
                     taskItemList.add(task);
-
                 }
-
-
             }
 
             @Override
@@ -90,33 +87,33 @@ public class TaskListActivity extends AppCompatActivity {
         };
         mDatabase.addValueEventListener(postListener);
 
-       // ListView listView = (ListView) findViewById(R.id.listView);
-       // listView.setAdapter(itemsAdapter);
+
+        // ListView listView = (ListView) findViewById(R.id.listView);
+        // listView.setAdapter(itemsAdapter);
         ListView listView = (ListView) findViewById(R.id.listView);
+
+
         listView.setAdapter(adapter);
-
-}
-
-    private void addIssueView(TaskItem task) {
-
-
-        TextView tv = new TextView(this);
-        tv.setPadding(15,15,5,0);
-        tv.setText("Title: " + task.title + "\nDescription: " + task.descriptionText + "\nOwned by: "+ task.owner_uid);
-
-        Button button  = new Button(this);
-        button.setText("Edit");
-
-        linearLayout.addView(tv);
-        linearLayout.addView(button);
-
-
-
         /*
-        TextView t = new TextView(this);
-        t = (TextView) findViewById(R.id.dynamic_task_view);
-        t.setText("Description: "+ task.descriptionText);*/
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+               // LinearLayout textView = (LinearLayout) view;
+                //String message = textView.getText().toString();
+                Toast.makeText(TaskListActivity.this, "You clicked an item", Toast.LENGTH_LONG).show();
+            }
+        });
+        */
+
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
+                Toast.makeText(TaskListActivity.this, "You clicked an item", Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,36 +121,8 @@ public class TaskListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-    public void signout(MenuItem item){
+
+    public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
-    }
-
-
-
-    public void writeDatabase() {
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        //myRef.setValue("Hello, World!");
-
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 }

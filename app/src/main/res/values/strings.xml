@@ -30,4 +30,6 @@
     <string name="pick_time">Time</string>
     <string name="enter_title">Enter Title</string>
     <string name="action_signout">Sign out</string>
+    <string name="action_new_task">New task</string>
+    <string name="register">Create</string>
 </resources>

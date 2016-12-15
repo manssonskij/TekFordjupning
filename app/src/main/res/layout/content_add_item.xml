@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/taskItemTitle"
         android:hint="@string/enter_title"
-        android:inputType="text"
+        android:inputType="textCapSentences"
         android:maxLines="1"
   />
 
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:text="Add"
         android:id="@+id/saveButton"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/taskItemDescription"
         android:layout_alignParentEnd="true" />
 
     <EditText
