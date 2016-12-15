@@ -13,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -88,9 +90,9 @@ public class AddItemActivity extends AppCompatActivity {
             String taskDescription = taskItemDescription.getText().toString().trim();
             String taskId = "";
 
-            TaskItem task = new TaskItem(title, taskDescription);
+            TaskItem task = new TaskItem(taskId, title, taskDescription);
 
-            mDatabase.child("task").child(user.getUid()).setValue(task);
+            mDatabase.child("task").child(user.getUid()).child(title).setValue(task);
         }
         catch (Exception e){
             return false;
@@ -142,6 +144,14 @@ public class AddItemActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    public void signout(MenuItem item){
+        FirebaseAuth.getInstance().signOut();
+    }
 }
 

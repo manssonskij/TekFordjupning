@@ -32,13 +32,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private AutoCompleteTextView mEmailView;
     private AutoCompleteTextView mNameView;
-    //private TextInputEditText mNameView;
-    //private TextInputEditText mPasswordView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    // private FirebaseAuth mAuth;
-    // private FirebaseAuth.AuthStateListener mAuthListener;
+
     private Boolean mAllowNavigation = true;
     private ProgressBar progressBar;
     /*
@@ -61,25 +58,13 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Views
-        // changed to AutoCompleteTextView from textinputedittext
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        //mNameView = (TextInputEditText) findViewById(R.id.name);
         mNameView = (AutoCompleteTextView) findViewById(R.id.name);
         mPasswordView = (EditText) findViewById(R.id.password);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Buttons
-
-        findViewById(R.id.email_sign_in_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkUserInput()) return;
-                createAccount();
-            }
-        });
 
         findViewById(R.id.email_register_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,10 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        //findViewById(R.id.email_create_account_button).setOnClickListener(this);
-        //findViewById(R.id.sign_out_button).setOnClickListener(this);
-
-        // Should be in onCreate
+        // Shall be in onCreate
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -117,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -166,13 +149,13 @@ public class RegisterActivity extends AppCompatActivity {
         try {
             String email = mEmailView.getText().toString().trim();
             String username = mNameView.getText().toString().trim();
-            String userId = username + "-testuser";
 
-            User user = new User(username, email);
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            mDatabase.child("users").child(userId).setValue(user);
-            //mDatabase.child("users").child(userId).setValue(user);
-            //mDatabase.child("task").child("task-test").setValue(userId);
+            User user = new User(uid, username, email);
+
+            mDatabase.child("users").child(username).setValue(user);
+
         } catch (Exception e) {
             return false;
         }
@@ -202,6 +185,10 @@ public class RegisterActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    public void signOut(){
+        FirebaseAuth.getInstance().signOut();
     }
 
     private boolean checkUserInput() {
