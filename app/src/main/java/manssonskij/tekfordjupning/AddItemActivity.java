@@ -1,6 +1,7 @@
 package manssonskij.tekfordjupning;
 
 import android.content.Intent;
+import android.icu.text.RelativeDateTimeFormatter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -19,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class AddItemActivity extends AppCompatActivity {
 
@@ -72,22 +76,35 @@ public class AddItemActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         try {
-            String title =  taskItemTitle.getText().toString().trim();
+            String title = taskItemTitle.getText().toString().trim();
             String taskDescription = taskItemDescription.getText().toString().trim();
             String taskId = "";
 
-            String start_date = findViewById(R.id.date_start_Button).toString().trim();
-            String start_time = findViewById(R.id.time_start_Button).toString().trim();
-            String end_date = findViewById(R.id.date_end_Button).toString().trim();;
+            date_start_button = (Button) findViewById(R.id.date_start_Button);
+            time_start_button = (Button) findViewById(R.id.time_start_Button);
+            date_end_button = (Button) findViewById(R.id.date_end_Button);
+            time_end_button = (Button) findViewById(R.id.time_end_Button);
+
+            String start_date = date_start_button.getText().toString().trim();
+            String start_time = time_start_button.getText().toString().trim();
+            String end_date = date_end_button.getText().toString().trim();
+            String end_time = time_end_button.getText().toString().trim();
+
+/*
+            String start_date = findViewById(R.id.date_start_Button).get.toString().trim();
+            String start_time = findViewById(R.id.time_start_Button).getText().toString().trim();
+            String end_date = findViewById(R.id.date_end_Button)getText().toString().trim();;
             String end_time = findViewById(R.id.time_end_Button).toString().trim();;
+*/
+            // DateFormat format = new SimpleDateFormat("d/M/y");
+            //format.parse(start_date);
 
             //String owner_uid, String title, Date start_date, Date end_date, String start_time, String end_time, String descriptionText
-            TaskItem task = new TaskItem(user.getUid(),title,taskDescription, start_date,end_date, start_time,end_time);
+            TaskItem task = new TaskItem(user.getEmail(), title, taskDescription, start_date, end_date, start_time, end_time);
             //TaskItem task = new TaskItem(taskId, title, taskDescription);
 
             mDatabase.child("task").child(user.getUid()).child(title).setValue(task);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.d(TAG, "Some kind of error");
             Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
             return false;
@@ -104,11 +121,22 @@ public class AddItemActivity extends AppCompatActivity {
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
+
     private boolean checkUserInput() {
-        taskItemTitle= (EditText) findViewById(R.id.taskItemTitle);
-        taskItemDescription = (EditText)findViewById(R.id.taskItemDescription);
-        String title =  taskItemTitle.getText().toString().trim();
+        taskItemTitle = (EditText) findViewById(R.id.taskItemTitle);
+        taskItemDescription = (EditText) findViewById(R.id.taskItemDescription);
+        String title = taskItemTitle.getText().toString().trim();
         String taskDescription = taskItemDescription.getText().toString().trim();
+
+        date_start_button = (Button) findViewById(R.id.date_start_Button);
+        time_start_button = (Button) findViewById(R.id.time_start_Button);
+        date_end_button = (Button) findViewById(R.id.date_end_Button);
+        time_end_button = (Button) findViewById(R.id.time_end_Button);
+
+        String start_date = date_start_button.getText().toString().trim();
+        String start_time = time_start_button.getText().toString().trim();
+        String end_date = date_end_button.getText().toString().trim();
+        String end_time = time_end_button.getText().toString().trim();
 
         /**
          * Check that values exist, code from:
@@ -124,8 +152,15 @@ public class AddItemActivity extends AppCompatActivity {
             return true;
         }
 
+        if (TextUtils.isEmpty(start_date) || TextUtils.isEmpty(start_time) ||
+                TextUtils.isEmpty(end_date) || TextUtils.isEmpty(end_time)) {
+            Toast.makeText(getApplicationContext(), "You need to set dates and times", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
         return false;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -139,13 +174,15 @@ public class AddItemActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-    public void signout(MenuItem item){
+
+    public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
     }
 }

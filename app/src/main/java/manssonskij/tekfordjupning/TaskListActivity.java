@@ -60,25 +60,31 @@ public class TaskListActivity extends AppCompatActivity {
         //ArrayAdapter<TaskItem> itemsAdapter = new ArrayAdapter<TaskItem>(this, R.layout.task_item, taskItemList);
         TaskItemArrayAdapter adapter = new TaskItemArrayAdapter(this, taskItemList);
 
-        // https://firebase.google.com/docs/database/android/read-and-write
-        ValueEventListener taskListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
-                    TaskItem task = taskSnapshot.getValue(TaskItem.class);
-                    taskItemList.add(task);
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        mDatabase.addValueEventListener(taskListener);
+        try {
+            // https://firebase.google.com/docs/database/android/read-and-write
+            ValueEventListener taskListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get task object and use the values to update the UI
+                    for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
+                        TaskItem task = taskSnapshot.getValue(TaskItem.class);
+                        taskItemList.add(task);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    // ...
+                }
+            };
+            mDatabase.addValueEventListener(taskListener);
+
+        } catch (Exception e) {
+
+        }
 
         // ListView listView = (ListView) findViewById(R.id.listView);
         // listView.setAdapter(itemsAdapter);

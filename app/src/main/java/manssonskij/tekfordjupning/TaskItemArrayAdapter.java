@@ -23,6 +23,7 @@ private static class ViewHolder{
     TextView task_title;
     TextView task_uid;
     TextView task_description;
+    TextView start_date, start_time, end_date, end_time;
 }
 
     public TaskItemArrayAdapter(Context context, ArrayList<TaskItem> tasks) {
@@ -43,6 +44,11 @@ private static class ViewHolder{
             viewHolder.task_uid = (TextView) convertView.findViewById(R.id.task_uid);
             viewHolder.task_description = (TextView) convertView.findViewById(R.id.task_description);
 
+            viewHolder.start_date = (TextView) convertView.findViewById(R.id.start_date);
+            viewHolder.start_time = (TextView) convertView.findViewById(R.id.start_time);
+            viewHolder.end_date = (TextView) convertView.findViewById(R.id.end_date);
+            viewHolder.end_time = (TextView) convertView.findViewById(R.id.end_time);
+
             convertView.setTag(viewHolder);
 
         }else {
@@ -53,8 +59,13 @@ private static class ViewHolder{
 
         // Populate the data into the template view using the data object
         viewHolder.task_title.setText(taskItem.title);
-        viewHolder.task_uid.setText(taskItem.owner_uid);
+        viewHolder.task_uid.setText("Owned by: " + taskItem.owner_uid);
         viewHolder.task_description.setText(taskItem.descriptionText);
+
+        viewHolder.start_date.setText("Starts " + taskItem.start_date);
+        viewHolder.start_time.setText(" @ " + taskItem.start_time);
+        viewHolder.end_date.setText("Due " + taskItem.end_date);
+        viewHolder.end_time.setText(" @ "+ taskItem.end_time);
     // Return the completed view to render on screen
         return convertView;
     }

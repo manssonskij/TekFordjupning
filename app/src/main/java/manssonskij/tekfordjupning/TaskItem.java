@@ -11,6 +11,7 @@ import java.util.Date;
 public class TaskItem {
 
     public String owner_uid;
+    public String email;
     public String title;
     public String start_date;
     public String end_date;
@@ -29,8 +30,9 @@ public class TaskItem {
         this.descriptionText = descriptionText;
     }
 
-    public TaskItem(String owner_uid, String title,String descriptionText, String start_date, String end_date, String start_time, String end_time) {
+    public TaskItem(String owner_uid,String email, String title,String descriptionText, String start_date, String end_date, String start_time, String end_time) {
         this.owner_uid = owner_uid;
+        this.email = email;
         this.title = title;
         this.start_date = start_date;
         this.end_date = end_date;

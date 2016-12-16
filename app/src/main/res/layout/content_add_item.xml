@@ -51,6 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:id="@+id/date_time_bar_end"
         android:layout_below="@+id/date_time_bar">
 
     <Button
@@ -79,7 +80,7 @@
         android:ems="10"
         android:lines="6"
         android:hint="Enter description"
-        android:layout_below="@+id/date_time_bar"
+        android:layout_below="@+id/date_time_bar_end"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="13dp"
         android:id="@+id/taskItemDescription" />
@@ -89,6 +90,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/input_register"
+        android:backgroundTintMode="multiply"
         >
     <Button
         android:layout_weight="1"
@@ -96,15 +99,16 @@
         android:layout_height="wrap_content"
         android:text="Clear data"
         android:id="@+id/clearButton"
-        android:layout_below="@+id/taskItemDescription"
-        android:layout_alignParentEnd="false" />
+        android:layout_alignParentEnd="false"
+        android:background="@color/btn_logut_bg"/>
     <Button
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save task"
         android:id="@+id/saveButton"
-        android:layout_below="@+id/taskItemDescription"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="@color/btn_login"
+        />
     </LinearLayout>
 </RelativeLayout>
