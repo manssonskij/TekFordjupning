@@ -19,47 +19,92 @@
         android:id="@+id/taskItemTitle"
         android:hint="@string/enter_title"
         android:inputType="textCapSentences"
-        android:maxLines="1"
-  />
+        android:maxLines="1"  />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/date_time_bar"
+        android:layout_below="@+id/taskItemTitle">
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pick_date"
+        android:text="@string/pick_start_date_string"
         android:onClick="showDatePickerDialog"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/taskItemTitle"
-        android:id="@+id/dateButton"
+        android:layout_weight="1"
+        android:id="@+id/date_start_Button"
         style="@android:style/Widget.Holo.Spinner"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pick_time"
+        android:text="@string/pick_start_time_string"
         android:onClick="showTimePickerDialog"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/dateButton"
-        android:id="@+id/timeButton"
+        android:layout_weight="1"
+        android:id="@+id/time_start_Button"
+        style="@android:style/Widget.Holo.Spinner"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/date_time_bar">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_end_date_string"
+        android:onClick="showDatePickerDialog"
+        android:layout_weight="1"
+        android:id="@+id/date_end_Button"
         style="@android:style/Widget.Holo.Spinner"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add"
-        android:id="@+id/saveButton"
-        android:layout_below="@+id/taskItemDescription"
-        android:layout_alignParentEnd="true" />
+        android:text="@string/pick_end_time_string"
+        android:onClick="showTimePickerDialog"
+        android:layout_weight="1"
+        android:id="@+id/time_end_Button"
+        style="@android:style/Widget.Holo.Spinner"/>
+    </LinearLayout>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:lines="4"
+        android:lines="6"
         android:hint="Enter description"
-        android:layout_below="@+id/timeButton"
+        android:layout_below="@+id/date_time_bar"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="13dp"
         android:id="@+id/taskItemDescription" />
 
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+    <Button
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear data"
+        android:id="@+id/clearButton"
+        android:layout_below="@+id/taskItemDescription"
+        android:layout_alignParentEnd="false" />
+    <Button
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save task"
+        android:id="@+id/saveButton"
+        android:layout_below="@+id/taskItemDescription"
+        android:layout_alignParentEnd="true" />
+    </LinearLayout>
 </RelativeLayout>

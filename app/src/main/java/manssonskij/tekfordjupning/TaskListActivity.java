@@ -3,7 +3,6 @@ package manssonskij.tekfordjupning;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,12 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,7 +36,7 @@ public class TaskListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_list_scrolling);
+        setContentView(R.layout.activity_item_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -55,7 +50,6 @@ public class TaskListActivity extends AppCompatActivity {
             }
         });
 
-
         // init Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
@@ -67,13 +61,12 @@ public class TaskListActivity extends AppCompatActivity {
         TaskItemArrayAdapter adapter = new TaskItemArrayAdapter(this, taskItemList);
 
         // https://firebase.google.com/docs/database/android/read-and-write
-
-        ValueEventListener postListener = new ValueEventListener() {
+        ValueEventListener taskListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    TaskItem task = postSnapshot.getValue(TaskItem.class);
+                for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
+                    TaskItem task = taskSnapshot.getValue(TaskItem.class);
                     taskItemList.add(task);
                 }
             }
@@ -85,16 +78,23 @@ public class TaskListActivity extends AppCompatActivity {
                 // ...
             }
         };
-        mDatabase.addValueEventListener(postListener);
-
+        mDatabase.addValueEventListener(taskListener);
 
         // ListView listView = (ListView) findViewById(R.id.listView);
         // listView.setAdapter(itemsAdapter);
         ListView listView = (ListView) findViewById(R.id.listView);
-
-
         listView.setAdapter(adapter);
-        /*
+
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
+
+                int position = (Integer) view.getTag();
+
+                Toast.makeText(TaskListActivity.this, "You clicked an item", Toast.LENGTH_LONG).show();
+            }
+        });
+                /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -104,16 +104,7 @@ public class TaskListActivity extends AppCompatActivity {
             }
         });
         */
-
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
-                Toast.makeText(TaskListActivity.this, "You clicked an item", Toast.LENGTH_LONG).show();
-
-            }
-        });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

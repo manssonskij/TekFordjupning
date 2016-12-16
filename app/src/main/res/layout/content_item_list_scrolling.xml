@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="manssonskij.tekfordjupning.TaskListActivity"
-    tools:showIn="@layout/activity_item_list_scrolling"
+    tools:showIn="@layout/activity_item_list"
     android:id="@+id/nested_scroll_view">
 
     <LinearLayout

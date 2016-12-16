@@ -25,9 +25,13 @@
         "Material is the metaphor.\n\n"
     </string>
     <string name="teknikf_rdjupning">TeknikFördjupning</string>
+
+    <!-- Strings related to add_task -->
     <string name="title_activity_add_item">Add issue</string>
-    <string name="pick_date">Date</string>
-    <string name="pick_time">Time</string>
+    <string name="pick_start_date_string">Start date</string>
+    <string name="pick_start_time_string">Start time</string>
+    <string name="pick_end_date_string">End date</string>
+    <string name="pick_end_time_string">End time</string>
     <string name="enter_title">Enter Title</string>
     <string name="action_signout">Sign out</string>
     <string name="action_new_task">New task</string>

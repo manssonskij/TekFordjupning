@@ -1,24 +1,18 @@
 package manssonskij.tekfordjupning;
 
-import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.icu.util.Calendar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,14 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AddItemActivity extends AppCompatActivity {
 
-    private DatePicker datePicker;
-    private Calendar calendar;
-    private TextView dateView;
-    private int year;
-    private int month;
-    private int day;
-
     private EditText taskItemTitle, taskItemDescription;
+    private Button date_end_button, date_start_button, time_end_button, time_start_button;
+
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "AddItemActivity";
@@ -54,6 +43,7 @@ public class AddItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkUserInput()) return;
                 createTask();
+                startActivity(new Intent(AddItemActivity.this, TaskListActivity.class));
             }
         });
 
@@ -80,21 +70,26 @@ public class AddItemActivity extends AppCompatActivity {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        /*
-        String userdisplayname = user.getUid();
-        Log.d("user: ", userdisplayname);
-        */
 
         try {
             String title =  taskItemTitle.getText().toString().trim();
             String taskDescription = taskItemDescription.getText().toString().trim();
             String taskId = "";
 
-            TaskItem task = new TaskItem(taskId, title, taskDescription);
+            String start_date = findViewById(R.id.date_start_Button).toString().trim();
+            String start_time = findViewById(R.id.time_start_Button).toString().trim();
+            String end_date = findViewById(R.id.date_end_Button).toString().trim();;
+            String end_time = findViewById(R.id.time_end_Button).toString().trim();;
+
+            //String owner_uid, String title, Date start_date, Date end_date, String start_time, String end_time, String descriptionText
+            TaskItem task = new TaskItem(user.getUid(),title,taskDescription, start_date,end_date, start_time,end_time);
+            //TaskItem task = new TaskItem(taskId, title, taskDescription);
 
             mDatabase.child("task").child(user.getUid()).child(title).setValue(task);
         }
         catch (Exception e){
+            Log.d(TAG, "Some kind of error");
+            Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
