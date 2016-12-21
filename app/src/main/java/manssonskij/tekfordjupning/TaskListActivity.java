@@ -9,10 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import manssonskij.tekfordjupning.Objects.TaskItem;
 
 
 public class TaskListActivity extends AppCompatActivity {
@@ -39,8 +38,6 @@ public class TaskListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //LinearLayout linearLayout = (LinearLayout) findViewById(R.id.item_list_linear_layout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -75,9 +72,7 @@ public class TaskListActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    // Getting Post failed, log a message
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    // ...
+                    Log.w(TAG, "loadTaskItem:onCancelled", databaseError.toException());
                 }
             };
             mDatabase.addValueEventListener(taskListener);
@@ -86,27 +81,24 @@ public class TaskListActivity extends AppCompatActivity {
 
         }
 
-        // ListView listView = (ListView) findViewById(R.id.listView);
-        // listView.setAdapter(itemsAdapter);
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
+
+        /*
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
-
                 int position = (Integer) view.getTag();
-
-                Toast.makeText(TaskListActivity.this, "You clicked an item", Toast.LENGTH_LONG).show();
-            }
-        });
+             //   TaskItem item = (TaskItem) view.getTag();
+                //
                 /*
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               // LinearLayout textView = (LinearLayout) view;
-                //String message = textView.getText().toString();
-                Toast.makeText(TaskListActivity.this, "You clicked an item", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(TaskListActivity.this, AddItemActivity.class);
+                TaskItem taskId = null;
+                intent.putExtra("EXTRA_SESSION_ID", taskId);
+                startActivity(intent);
+
+               Toast.makeText(TaskListActivity.this, "You clicked an item: " +position, Toast.LENGTH_LONG).show();
             }
         });
         */
@@ -121,5 +113,10 @@ public class TaskListActivity extends AppCompatActivity {
 
     public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
+    }
+
+    public void removeTaskItemFromListAndDatabase(){
+
+
     }
 }

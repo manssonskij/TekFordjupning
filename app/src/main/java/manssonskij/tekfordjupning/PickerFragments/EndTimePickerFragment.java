@@ -1,4 +1,4 @@
-package manssonskij.tekfordjupning;
+package manssonskij.tekfordjupning.PickerFragments;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -10,11 +10,13 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+import manssonskij.tekfordjupning.R;
+
 /**
  * Created by Anton on 2016-12-12.
  */
 
-public class TimePickerFragment extends DialogFragment
+public class EndTimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
     @Override
@@ -30,7 +32,7 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        Button time_button= (Button) getActivity().findViewById(R.id.time_start_Button);
+        Button time_button= (Button) getActivity().findViewById(R.id.time_end_Button);
         if (hourOfDay == 0)
         time_button.setText("0"+hourOfDay + ":" + minute);
         else

@@ -1,4 +1,4 @@
-package manssonskij.tekfordjupning;
+package manssonskij.tekfordjupning.Objects;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 

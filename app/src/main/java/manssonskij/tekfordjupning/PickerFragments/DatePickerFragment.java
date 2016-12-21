@@ -1,4 +1,4 @@
-package manssonskij.tekfordjupning;
+package manssonskij.tekfordjupning.PickerFragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,6 +7,8 @@ import android.support.v4.app.DialogFragment;
 import android.widget.Button;
 import android.widget.DatePicker;
 import java.util.Calendar;
+
+import manssonskij.tekfordjupning.R;
 
 /**
  * Created by Anton on 2016-12-12.

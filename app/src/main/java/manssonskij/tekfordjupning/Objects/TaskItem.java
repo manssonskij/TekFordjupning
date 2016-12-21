@@ -1,4 +1,6 @@
-package manssonskij.tekfordjupning;
+package manssonskij.tekfordjupning.Objects;
+
+import android.location.Location;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -10,14 +12,13 @@ import java.util.Date;
 @IgnoreExtraProperties
 public class TaskItem {
 
+    public String task_id;
     public String owner_uid;
     public String email;
     public String title;
-    public String start_date;
-    public String end_date;
-    public String start_time;
-    public String end_time;
     public String descriptionText;
+    public Location mLocation;
+    public TaskDate taskDate;
 
 
     public TaskItem() {
@@ -30,24 +31,24 @@ public class TaskItem {
         this.descriptionText = descriptionText;
     }
 
-    public TaskItem(String owner_uid,String email, String title,String descriptionText, String start_date, String end_date, String start_time, String end_time) {
+    public TaskItem(String owner_uid,Location mLocation, String email, String title,String descriptionText, TaskDate taskDate) {
         this.owner_uid = owner_uid;
         this.email = email;
         this.title = title;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.start_time = start_time;
-        this.end_time = end_time;
+        this.taskDate = taskDate;
+        //this.start_date = start_date;
+        //this.end_date = end_date;
+        //this.start_time = start_time;
+        //this.end_time = end_time;
         this.descriptionText = descriptionText;
+        this.mLocation = mLocation;
     }
 
     @Override
     public String toString() {
         return "owner_uid: '" + owner_uid +
                 "\nTitle: " + title +
-                "\nDescriptionTex: " + descriptionText +
-                "\nstart_date=" + start_date +
-                "\nend_date=" + end_date;
+                "\nDescriptionTex: " + descriptionText;
     }
 
 }

@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import manssonskij.tekfordjupning.Objects.User;
+
 /**
  * Created by Anton on 2016-12-06.
  */

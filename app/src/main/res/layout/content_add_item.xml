@@ -13,6 +13,12 @@
     tools:context="manssonskij.tekfordjupning.AddItemActivity"
     tools:showIn="@layout/activity_add_item">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskItemUserName"
+        />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pick_end_date_string"
-        android:onClick="showDatePickerDialog"
+        android:onClick="showEndDatePickerDialog"
         android:layout_weight="1"
         android:id="@+id/date_end_Button"
         style="@android:style/Widget.Holo.Spinner"/>
@@ -67,11 +73,53 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pick_end_time_string"
-        android:onClick="showTimePickerDialog"
+        android:onClick="showEndTimePickerDialog"
         android:layout_weight="1"
         android:id="@+id/time_end_Button"
         style="@android:style/Widget.Holo.Spinner"/>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/location_layout"
+        android:layout_below="@+id/date_time_bar_end">
+        <TextView
+            android:id="@+id/latitude_text_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="Latitude: "
+            android:layout_weight="1"
+
+            />
+        <TextView
+            android:id="@+id/latitude_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_weight="1"
+
+            />
+        <TextView
+            android:id="@+id/longitude_text_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_weight="1"
+            android:text=": "
+            />
+
+        <TextView
+            android:id="@+id/longitude_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:textIsSelectable="true"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+
 
     <EditText
         android:layout_width="match_parent"
@@ -85,6 +133,15 @@
         android:layout_marginEnd="13dp"
         android:id="@+id/taskItemDescription" />
 
+    <Button
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:id="@+id/location_button"
+        android:layout_alignParentEnd="true"
+
+        />
     <LinearLayout
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
