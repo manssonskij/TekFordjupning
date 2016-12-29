@@ -19,6 +19,7 @@ public class TaskItem {
     public String descriptionText;
     public Location mLocation;
     public TaskDate taskDate;
+    public TaskPosition taskPosition;
 
 
     public TaskItem() {
@@ -31,7 +32,7 @@ public class TaskItem {
         this.descriptionText = descriptionText;
     }
 
-    public TaskItem(String owner_uid,Location mLocation, String email, String title,String descriptionText, TaskDate taskDate) {
+    public TaskItem(String owner_uid, String email, String title,String descriptionText, TaskDate taskDate,TaskPosition taskPosition) {
         this.owner_uid = owner_uid;
         this.email = email;
         this.title = title;
@@ -41,7 +42,9 @@ public class TaskItem {
         //this.start_time = start_time;
         //this.end_time = end_time;
         this.descriptionText = descriptionText;
-        this.mLocation = mLocation;
+        this.taskPosition = taskPosition;
+       // this.mLocation = mLocation;
+        this.task_id = title;
     }
 
     @Override

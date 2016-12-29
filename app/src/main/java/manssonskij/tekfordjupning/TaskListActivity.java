@@ -50,7 +50,10 @@ public class TaskListActivity extends AppCompatActivity {
         // init Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference("task").child(user.getUid());
+        try {
+            mDatabase = FirebaseDatabase.getInstance().getReference("task").child(user.getUid());
+        } catch (NullPointerException e){}
+
 
         //  taskItem stuff
         final ArrayList<TaskItem> taskItemList = new ArrayList<TaskItem>();

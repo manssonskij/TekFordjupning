@@ -24,6 +24,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,6 +36,7 @@ import java.util.Date;
 import manssonskij.tekfordjupning.GoogleLocationAPI.TestGoogleActivity;
 import manssonskij.tekfordjupning.Objects.TaskDate;
 import manssonskij.tekfordjupning.Objects.TaskItem;
+import manssonskij.tekfordjupning.Objects.TaskPosition;
 import manssonskij.tekfordjupning.PickerFragments.DatePickerFragment;
 import manssonskij.tekfordjupning.PickerFragments.EndDatePickerFragment;
 import manssonskij.tekfordjupning.PickerFragments.EndTimePickerFragment;
@@ -41,6 +44,7 @@ import manssonskij.tekfordjupning.PickerFragments.TimePickerFragment;
 
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.firebase.database.ValueEventListener;
 
 public class AddItemActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener {
 
@@ -69,11 +73,10 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         String task_edit_id = intent.getStringExtra("TASK_ID");
         String type = intent.getType();
 
+
         mAuth = FirebaseAuth.getInstance();
 
         // Create an instance of GoogleAPIClient.
-        // GoogleApiClient mGoogleApiClient = null;
-
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -82,13 +85,6 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
                     .build();
         }
 
-        /*
-        locationFinder=new LocationFinder(AddItemActivity.this);
-        try {
-            String loco = locationFinder.getLocation().toString();
-            Toast.makeText(getApplicationContext(), "Location: " +loco, Toast.LENGTH_SHORT).show();
-        }catch (Exception E){}
-        */
 
         // Bind the date and time buttons
         date_start_button = (Button) findViewById(R.id.date_start_Button);
@@ -96,21 +92,50 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         date_end_button = (Button) findViewById(R.id.date_end_Button);
         time_end_button = (Button) findViewById(R.id.time_end_Button);
 
-        location_button = (Button) findViewById(R.id.location_button);
-
         mLatitudeText = (TextView) findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) findViewById((R.id.longitude_text));
 
         taskItemTitle_editText = (EditText) findViewById(R.id.taskItemTitle);
         taskItemDescription_editText = (EditText) findViewById(R.id.taskItemDescription);
 
-        findViewById(R.id.location_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                startActivity(new Intent(AddItemActivity.this, TestGoogleActivity.class));
-            }
-        });
+
+        if(!TextUtils.isEmpty(task_edit_id))
+            try {
+                DatabaseReference ref =
+                        FirebaseDatabase.getInstance().getReference().child("task").child(task_edit_id.toString());
+
+
+                ValueEventListener postListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get Post object and use the values to update the UI
+                        TaskItem taskItem = dataSnapshot.getValue(TaskItem.class);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                };
+                mPostReference.addValueEventListener(postListener);
+                DataSnapshot dataSnapshot = new DataSnapshot();
+                DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
+                    TaskItem task = taskSnapshot.getValue(TaskItem.class);
+
+                    private void getTaskObject(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+
+                        }
+                    }
+
+
+            }catch (Exception e){}
+
+
 
         findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,10 +211,11 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
 
 
         try {
+            TaskPosition taskPosition = new TaskPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude());
             TaskDate taskDate = new TaskDate(start_date, end_date, start_time, end_time);
             //String owner_uid, String title, Date start_date, Date end_date, String start_time, String end_time, String descriptionText
-            TaskItem task = new TaskItem(user.getUid(), mLastLocation, user.getEmail(), title, taskDescription, taskDate);
-            //TaskItem task = new TaskItem(taskId, title, taskDescription);
+            TaskItem task = new TaskItem(user.getUid(), user.getEmail(), title, taskDescription, taskDate, taskPosition);
+            //TaskItem task = new TaskItem(taskId, title, taskDesmLastLocationcription);
 
             mDatabase.child("task").child(user.getUid()).child(title).setValue(task);
 
