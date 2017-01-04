@@ -6,8 +6,8 @@ package manssonskij.tekfordjupning.Objects;
 
 public class TaskPosition {
 
-    double latitude;
-    double longitude;
+    public double latitude;
+    public double longitude;
 
     public TaskPosition() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -16,5 +16,11 @@ public class TaskPosition {
     public TaskPosition(double latitude,double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return  "Latitude: " + latitude +
+                ", Longitude: " + longitude;
     }
 }

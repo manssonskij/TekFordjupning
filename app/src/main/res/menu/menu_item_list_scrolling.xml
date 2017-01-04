@@ -1,10 +1,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="manssonskij.tekfordjupning.TaskListActivity">
+    tools:context="manssonskij.tekfordjupning.MyTaskListActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_signout"
+        android:orderInCategory="400"
+        android:title="@string/action_signout"
+        app:showAsAction="never"
+        android:onClick="signout"/>
+    <item
+        android:id="@+id/action_list_all"
+        android:orderInCategory="400"
+        android:title="All tasks"
+        app:showAsAction="always"
+        android:onClick="displayAllTasks"/>
+    <item
+        android:id="@+id/action_list_mine"
+        android:orderInCategory="300"
+        android:title="My tasks"
+        app:showAsAction="always"
+        android:onClick="displayMyTasks"/>
 </menu>

@@ -30,11 +30,12 @@
             android:name=".RegisterActivity"
             android:label="@string/register" />
         <activity
-            android:name=".Unused_LoginActivity"
-            android:label="@string/title_activity_login" />
+            android:name=".MyTaskListActivity"
+            android:label="@string/title_activity_myTasks"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".TaskListActivity"
-            android:label="@string/title_activity_item_list_scrolling"
+            android:name=".AllTaskListActivity"
+            android:label="@string/title_activity_allTasks"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AddItemActivity"

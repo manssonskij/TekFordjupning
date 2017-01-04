@@ -1,8 +1,7 @@
-package manssonskij.tekfordjupning;
+package manssonskij.tekfordjupning.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import manssonskij.tekfordjupning.AddItemActivity;
 import manssonskij.tekfordjupning.Objects.TaskItem;
+import manssonskij.tekfordjupning.R;
 
 
 /**
@@ -27,12 +28,14 @@ import manssonskij.tekfordjupning.Objects.TaskItem;
  * inspired by:https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
  */
 
-public class TaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
+public class AllTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = firebaseAuth.getCurrentUser();
-    private DatabaseReference ref =
-            FirebaseDatabase.getInstance().getReference().child("task").child(user.getUid());
+    private DatabaseReference ref;
+
+   // private DatabaseReference ref =
+     //       FirebaseDatabase.getInstance().getReference().child("task").child("7WqvfYxioHPDI4NQySdQcjJbV3Z2");
 
     private static class ViewHolder {
         TextView task_title;
@@ -40,9 +43,11 @@ public class TaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
         TextView task_description;
         TextView start_date, start_time, end_date, end_time;
         Button edit_button, delete_button;
+        TextView location;
     }
 
-    public TaskItemArrayAdapter(Context context, ArrayList<TaskItem> tasks) {
+    // recieves DatabaseReference as extra parameter
+    public AllTaskItemArrayAdapter(Context context, ArrayList<TaskItem> tasks, DatabaseReference ref) {
         super(context, 0, tasks);
     }
 
@@ -68,6 +73,8 @@ public class TaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
             viewHolder.edit_button = (Button) convertView.findViewById(R.id.edit_button);
             viewHolder.delete_button = (Button) convertView.findViewById(R.id.delete_button);
 
+            viewHolder.location = (TextView) convertView.findViewById(R.id.task_location);
+
             convertView.setTag(viewHolder);
 
         } else {
@@ -85,6 +92,8 @@ public class TaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
         viewHolder.start_time.setText(" @ " + taskItem.taskDate.start_time);
         viewHolder.end_date.setText("Due " + taskItem.taskDate.end_date);
         viewHolder.end_time.setText(" @ " + taskItem.taskDate.end_time);
+
+        viewHolder.location.setText(taskItem.taskPosition.toString());
 
         //convertView.setTag(taskItem);
         // Attach the click event handler
@@ -112,8 +121,6 @@ public class TaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
                 // Access user from within the tag
                 int position = (Integer) view.getTag();
                 TaskItem taskItem = getItem(position);
-
-
 
                 try {
                     Toast.makeText(getContext(), "Removing: "+ taskItem.title, Toast.LENGTH_LONG).show();

@@ -32,8 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DateFormat;
 import java.util.Date;
 
-//import manssonskij.tekfordjupning.GoogleLocationAPI.LocationFinderAPI;
-import manssonskij.tekfordjupning.GoogleLocationAPI.TestGoogleActivity;
 import manssonskij.tekfordjupning.Objects.TaskDate;
 import manssonskij.tekfordjupning.Objects.TaskItem;
 import manssonskij.tekfordjupning.Objects.TaskPosition;
@@ -50,13 +48,17 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
 
     private EditText taskItemTitle_editText, taskItemDescription_editText;
     private Button date_end_button, date_start_button, time_end_button, time_start_button, location_button;
-    private String start_date, start_time, end_date, end_time;
-    private String title, taskDescription;
     private TextView mLatitudeText, mLongitudeText;
 
-    FirebaseAuth mAuth;
-    FirebaseAuth.AuthStateListener mAuthListener;
+    private String start_date, start_time, end_date, end_time;
+    private String title, taskDescription;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser user;
     private static final String TAG = "AddItemActivity";
+
+    private String task_edit_id;
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -68,13 +70,8 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Check for extra parameter if this is an existing task that should be edited
-        Intent intent = getIntent();
-        String task_edit_id = intent.getStringExtra("TASK_ID");
-        String type = intent.getType();
-
-
         mAuth = FirebaseAuth.getInstance();
+
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -85,6 +82,7 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
                     .build();
         }
 
+        checkFirebaseAuthStatus();
 
         // Bind the date and time buttons
         date_start_button = (Button) findViewById(R.id.date_start_Button);
@@ -99,41 +97,14 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         taskItemDescription_editText = (EditText) findViewById(R.id.taskItemDescription);
 
 
+        // Check for extra parameter if this is an existing task that should be edited
 
-        if(!TextUtils.isEmpty(task_edit_id))
-            try {
-                DatabaseReference ref =
-                        FirebaseDatabase.getInstance().getReference().child("task").child(task_edit_id.toString());
-
-
-                ValueEventListener postListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get Post object and use the values to update the UI
-                        TaskItem taskItem = dataSnapshot.getValue(TaskItem.class);
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                        // ...
-                    }
-                };
-                mPostReference.addValueEventListener(postListener);
-                DataSnapshot dataSnapshot = new DataSnapshot();
-                DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
-                    TaskItem task = taskSnapshot.getValue(TaskItem.class);
-
-                    private void getTaskObject(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
-
-                        }
-                    }
-
-
-            }catch (Exception e){}
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            task_edit_id = getIntent().getStringExtra("TASK_ID");
+            //String type = getIntent().getType();
+            checkEditParameter();
+        }
 
 
 
@@ -142,30 +113,89 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
             public void onClick(View v) {
                 if (validateInputFields()) return;
                 createTaskItem();
-                startActivity(new Intent(AddItemActivity.this, TaskListActivity.class));
+                startActivity(new Intent(AddItemActivity.this, MyTaskListActivity.class));
             }
         });
 
-        // Should be in onCreate
+        findViewById(R.id.clearButton).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                taskItemTitle_editText.setText("");
+                date_start_button.setText("Start date");
+                time_start_button.setText("Start time");
+                date_end_button.setText("End date");
+                time_end_button.setText("End time");
+
+                //mLatitudeText.setText(String.valueOf(item.taskPosition.latitude));
+                //mLongitudeText.setText(String.valueOf(item.taskPosition.longitude));
+
+                taskItemDescription_editText.setText("");
+            }
+        });
+    }
+
+    private void checkFirebaseAuthStatus() {
+        // check if there is a valid user, otherwise redirect to sign in activity
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
                     TextView t = (TextView) findViewById(R.id.taskItemUserName);
                     t.setText(user.getEmail());
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Toast.makeText(getApplicationContext(), "Logged in as " + user.getUid(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Logged in as " + user.getUid(), Toast.LENGTH_SHORT).show();
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                     startActivity(new Intent(AddItemActivity.this, MainActivity.class));
-                    Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "You are not logged in", Toast.LENGTH_SHORT).show();
                 }
                 // ...
             }
         };
+    }
+
+    private void checkEditParameter() {
+        if (!TextUtils.isEmpty(task_edit_id))
+            try {
+
+                //Toast.makeText(getApplicationContext(), "user identified as " + mAuth.getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
+                DatabaseReference ref =
+                        FirebaseDatabase.getInstance().getReference().child("task").child(mAuth.getCurrentUser().getUid());
+
+                ref.child(task_edit_id.toString()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+
+                        TaskItem item = snapshot.getValue(TaskItem.class);
+                        loadTaskItemValuesIntoView(item);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+
+                });
+
+            } catch (Exception e) {
+            }
+    }
+
+    private void loadTaskItemValuesIntoView(TaskItem item) {
+        taskItemTitle_editText.setText(item.title);
+        date_start_button.setText(item.taskDate.start_date);
+        time_start_button.setText(item.taskDate.start_time);
+        date_end_button.setText(item.taskDate.end_date);
+        time_end_button.setText(item.taskDate.end_time);
+
+        mLatitudeText.setText(String.valueOf(item.taskPosition.latitude));
+        mLongitudeText.setText(String.valueOf(item.taskPosition.longitude));
+
+        taskItemDescription_editText.setText(item.descriptionText);
+
     }
 
     private boolean validateInputFields() {
@@ -204,14 +234,14 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
     private boolean createTaskItem() {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         // creation time
         DateFormat.getTimeInstance().format(new Date());
 
 
         try {
-            TaskPosition taskPosition = new TaskPosition(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+            TaskPosition taskPosition = new TaskPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             TaskDate taskDate = new TaskDate(start_date, end_date, start_time, end_time);
             //String owner_uid, String title, Date start_date, Date end_date, String start_time, String end_time, String descriptionText
             TaskItem task = new TaskItem(user.getUid(), user.getEmail(), title, taskDescription, taskDate, taskPosition);
@@ -245,34 +275,9 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         }
     }
 
-    /*
-     *  The following PickerDialogs should be implemented in a better way
-     */
 
-    public void LocationFinderAPI(View v) {
-        //DialogFragment newFragment = new LocationFinderAPI();
-        //newFragment.show(getSupportFragmentManager(), "locationFinder");
-    }
 
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
-    }
 
-    public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
-
-    public void showEndDatePickerDialog(View v) {
-        DialogFragment newFragment = new EndDatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
-    }
-
-    public void showEndTimePickerDialog(View v) {
-        DialogFragment newFragment = new EndTimePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -313,6 +318,30 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+        /*
+     *  The following PickerDialogs should be implemented in a better way
+     */
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void showEndDatePickerDialog(View v) {
+        DialogFragment newFragment = new EndDatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void showEndTimePickerDialog(View v) {
+        DialogFragment newFragment = new EndTimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 }
 

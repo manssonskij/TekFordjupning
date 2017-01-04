@@ -19,8 +19,9 @@
     </string>
     <string name="auth_failed">Authentication Failed</string>
 
-    <!-- Strings related to login -->
-    <string name="title_activity_item_list_scrolling">Issues</string>
+    <!-- Strings related to listviews -->
+    <string name="title_activity_myTasks">My Issues</string>
+    <string name="title_activity_allTasks">All Issues</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
     </string>

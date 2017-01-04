@@ -21,12 +21,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import manssonskij.tekfordjupning.Adapters.MyTaskItemArrayAdapter;
 import manssonskij.tekfordjupning.Objects.TaskItem;
 
 
-public class TaskListActivity extends AppCompatActivity {
+public class MyTaskListActivity extends AppCompatActivity {
 
-    private static final String TAG = "TaskListActivity";
+    private static final String TAG = "MyTaskListActivity";
 
     private DatabaseReference mDatabase;
     private FirebaseAuth firebaseAuth;
@@ -43,7 +44,7 @@ public class TaskListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(TaskListActivity.this, AddItemActivity.class));
+                startActivity(new Intent(MyTaskListActivity.this, AddItemActivity.class));
             }
         });
 
@@ -55,14 +56,10 @@ public class TaskListActivity extends AppCompatActivity {
         } catch (NullPointerException e){}
 
 
-        //  taskItem stuff
         final ArrayList<TaskItem> taskItemList = new ArrayList<TaskItem>();
-        //ArrayAdapter<TaskItem> itemsAdapter = new ArrayAdapter<TaskItem>(this, R.layout.task_item, taskItemList);
-        TaskItemArrayAdapter adapter = new TaskItemArrayAdapter(this, taskItemList);
-
+        MyTaskItemArrayAdapter adapter = new MyTaskItemArrayAdapter(this, taskItemList);
 
         try {
-            // https://firebase.google.com/docs/database/android/read-and-write
             ValueEventListener taskListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -87,30 +84,12 @@ public class TaskListActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
-
-        /*
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
-                int position = (Integer) view.getTag();
-             //   TaskItem item = (TaskItem) view.getTag();
-                //
-                /*
-                Intent intent = new Intent(TaskListActivity.this, AddItemActivity.class);
-                TaskItem taskId = null;
-                intent.putExtra("EXTRA_SESSION_ID", taskId);
-                startActivity(intent);
-
-               Toast.makeText(TaskListActivity.this, "You clicked an item: " +position, Toast.LENGTH_LONG).show();
-            }
-        });
-        */
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_item_list_scrolling, menu);
         return true;
     }
 
@@ -120,6 +99,13 @@ public class TaskListActivity extends AppCompatActivity {
 
     public void removeTaskItemFromListAndDatabase(){
 
+    }
+
+    public void displayAllTasks(MenuItem item){
+        startActivity(new Intent(MyTaskListActivity.this, AllTaskListActivity.class));
 
     }
+
+    public void displayMyTasks(MenuItem item){}
+
 }

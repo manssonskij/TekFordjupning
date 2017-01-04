@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -35,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPasswordView;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    startActivity(new Intent(MainActivity.this, TaskListActivity.class));
+                    startActivity(new Intent(MainActivity.this, MyTaskListActivity.class));
                     mUsername.setText(user.getEmail());
                 } else {
                     // User is signed out
@@ -76,12 +75,12 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-
         Button signInButton = (Button) findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if (checkUserInput()) return;
                 signIn();
-                }
+            }
         });
 
         Button registerButton = (Button) findViewById(R.id.registerButton);
@@ -91,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -112,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-    public void signout(MenuItem item){
+
+    public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
     }
 
@@ -136,25 +137,55 @@ public class MainActivity extends AppCompatActivity {
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+        try {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
-                        startActivity(new Intent(MainActivity.this, TaskListActivity.class));
+                            startActivity(new Intent(MainActivity.this, MyTaskListActivity.class));
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(MainActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                Toast.makeText(MainActivity.this, R.string.auth_failed,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
+                            // ...
                         }
+                    });
 
-                        // ...
-                    }
-                });
+        } catch (Exception e) {
+           // Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private boolean checkUserInput() {
+        String email = mEmailView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
+        /**
+         * Check that values exist, code from:
+         * http://www.androidhive.info/2016/06/android-getting-started-firebase-simple-login-registration-auth/
+         */
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "You need to enter an email", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "You need to enter a password", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(getApplicationContext(), "Minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 }

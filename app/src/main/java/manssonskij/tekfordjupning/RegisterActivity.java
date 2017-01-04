@@ -136,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             writeUserCredentialsToDataBase();
 
-                            startActivity(new Intent(RegisterActivity.this, TaskListActivity.class));
+                            startActivity(new Intent(RegisterActivity.this, MyTaskListActivity.class));
                         }
 
                         // ...
