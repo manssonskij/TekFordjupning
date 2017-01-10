@@ -21,6 +21,6 @@ public class TaskPosition {
     @Override
     public String toString() {
         return  "Latitude: " + latitude +
-                ", Longitude: " + longitude;
+                "\nLongitude: " + longitude;
     }
 }

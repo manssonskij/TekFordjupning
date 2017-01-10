@@ -32,7 +32,7 @@ public class TaskItem {
         this.descriptionText = descriptionText;
     }
 
-    public TaskItem(String owner_uid, String email, String title,String descriptionText, TaskDate taskDate,TaskPosition taskPosition) {
+    public TaskItem(String task_id,String owner_uid, String email, String title,String descriptionText, TaskDate taskDate,TaskPosition taskPosition) {
         this.owner_uid = owner_uid;
         this.email = email;
         this.title = title;
@@ -44,7 +44,7 @@ public class TaskItem {
         this.descriptionText = descriptionText;
         this.taskPosition = taskPosition;
        // this.mLocation = mLocation;
-        this.task_id = title;
+        this.task_id = task_id;
     }
 
     @Override

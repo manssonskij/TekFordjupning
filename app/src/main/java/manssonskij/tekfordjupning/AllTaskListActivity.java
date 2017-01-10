@@ -22,12 +22,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
 
 import manssonskij.tekfordjupning.Adapters.AllTaskItemArrayAdapter;
 import manssonskij.tekfordjupning.Objects.TaskItem;
-import manssonskij.tekfordjupning.Objects.User;
-
 
 public class AllTaskListActivity extends AppCompatActivity {
 
@@ -38,8 +36,6 @@ public class AllTaskListActivity extends AppCompatActivity {
     private FirebaseUser user;
 
     private Map<String, String> contactList = new HashMap<String, String>();
-
-    //public AllTaskListActivity() {    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +60,6 @@ public class AllTaskListActivity extends AppCompatActivity {
 
     }
 
-
     private void getConctactsTasksFromFirebase() {
 
         // making a reference to the groups section in firebase
@@ -79,21 +74,18 @@ public class AllTaskListActivity extends AppCompatActivity {
 
                 // fetches the different contact info, ie user and their uid
                 for (DataSnapshot contactSnapshot : snapshot.getChildren()) {
-                    //System.out.println(contactSnapshot.getKey() + contactSnapshot.getValue());
                     contactList.put(contactSnapshot.getKey(), contactSnapshot.getValue().toString());
 
                     getSharedTasksAndPopulateView();
-
-                    /*for (Map.Entry<String, String> entry : contactList.entrySet()) {
-                        System.out.println(contactList.size() + "AFTER AFTER " + entry.getValue());
-                    }*/
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-        mDatabase.addListenerForSingleValueEvent(listener);
+        mDatabase.addValueEventListener(listener);
+        //mDatabase.addListenerForSingleValueEvent(listener);
     }
 
 
@@ -104,11 +96,10 @@ public class AllTaskListActivity extends AppCompatActivity {
 
         AllTaskItemArrayAdapter adapter = new AllTaskItemArrayAdapter(this, taskItemListAll, mDatabase);
 
-        //System.out.println("REACHED NEXT METHOD -----------------");
         for (Map.Entry<String, String> entry : contactList.entrySet()) {
-            //System.out.println("GGGGGGGG" + entry.getValue());
+
             try {
-                mDatabase = FirebaseDatabase.getInstance().getReference("task").child(entry.getValue().toString());
+                mDatabase = FirebaseDatabase.getInstance().getReference("task").child(entry.getValue());
             } catch (NullPointerException e) {
             }
 
@@ -140,6 +131,7 @@ public class AllTaskListActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -149,6 +141,7 @@ public class AllTaskListActivity extends AppCompatActivity {
 
     public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(AllTaskListActivity.this, MainActivity.class));
     }
 
     public void removeTaskItemFromListAndDatabase() {
@@ -161,6 +154,12 @@ public class AllTaskListActivity extends AppCompatActivity {
 
     public void displayMyTasks(MenuItem item) {
         startActivity(new Intent(AllTaskListActivity.this, MyTaskListActivity.class));
+    }
+
+    public void aboutFragment(MenuItem item){
+        AboutFragment newFragment = new AboutFragment();
+        newFragment.show(getSupportFragmentManager(),"aboutFragment");
+
     }
 
 }

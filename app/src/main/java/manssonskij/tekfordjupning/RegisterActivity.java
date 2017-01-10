@@ -28,9 +28,10 @@ import manssonskij.tekfordjupning.Objects.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private static final String TAG = "RegisterActivity";
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private static final String TAG = "RegisterActivity";
 
     private AutoCompleteTextView mEmailView;
     private AutoCompleteTextView mNameView;
@@ -95,19 +96,28 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+    private boolean checkUserInput() {
+        String email = mEmailView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
+        /**
+         * Check that values exist, code from:
+         * http://www.androidhive.info/2016/06/android-getting-started-firebase-simple-login-registration-auth/
+         */
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "You need to enter an email", Toast.LENGTH_SHORT).show();
+            return true;
         }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "You need to enter a password", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(getApplicationContext(), "Minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
     private void createAccount() {
@@ -145,8 +155,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+
     private boolean writeUserCredentialsToDataBase() {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
 
         try {
             String email = mEmailView.getText().toString().trim();
@@ -157,6 +170,8 @@ public class RegisterActivity extends AppCompatActivity {
             User user = new User(uid, username, email);
 
             mDatabase.child("users").child(username).setValue(user);
+            mDatabase.child("groups").child("alfa").child(username).setValue(uid);
+
 
         } catch (Exception e) {
             return false;
@@ -164,57 +179,22 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    private void signIn() {
 
-        String email = mEmailView.getText().toString().trim();
-        String password = mNameView.getText().toString().trim();
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(RegisterActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-    }
 
     public void signOut(){
         FirebaseAuth.getInstance().signOut();
     }
-
-    private boolean checkUserInput() {
-        String email = mEmailView.getText().toString().trim();
-        String password = mPasswordView.getText().toString().trim();
-        /**
-         * Check that values exist, code from:
-         * http://www.androidhive.info/2016/06/android-getting-started-firebase-simple-login-registration-auth/
-         */
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getApplicationContext(), "You need to enter an email", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "You need to enter a password", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        if (password.length() < 6) {
-            Toast.makeText(getApplicationContext(), "Minimum 6 characters!", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return false;
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
 }

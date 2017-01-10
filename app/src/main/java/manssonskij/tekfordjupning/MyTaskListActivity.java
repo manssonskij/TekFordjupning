@@ -1,6 +1,7 @@
 package manssonskij.tekfordjupning;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +26,7 @@ import manssonskij.tekfordjupning.Adapters.MyTaskItemArrayAdapter;
 import manssonskij.tekfordjupning.Objects.TaskItem;
 
 
-public class MyTaskListActivity extends AppCompatActivity {
+public class MyTaskListActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MyTaskListActivity";
 
@@ -95,6 +96,7 @@ public class MyTaskListActivity extends AppCompatActivity {
 
     public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(MyTaskListActivity.this, MainActivity.class));
     }
 
     public void removeTaskItemFromListAndDatabase(){
@@ -105,7 +107,16 @@ public class MyTaskListActivity extends AppCompatActivity {
         startActivity(new Intent(MyTaskListActivity.this, AllTaskListActivity.class));
 
     }
+    public void aboutFragment(MenuItem item){
+        AboutFragment newFragment = new AboutFragment();
+        newFragment.show(getSupportFragmentManager(),"aboutFragment");
+
+    }
 
     public void displayMyTasks(MenuItem item){}
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

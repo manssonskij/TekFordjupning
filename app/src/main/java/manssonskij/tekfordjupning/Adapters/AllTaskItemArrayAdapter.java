@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -30,19 +30,22 @@ import manssonskij.tekfordjupning.R;
 
 public class AllTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
 
+    private static final String TAG = "AllTaskItemArrayAdapter";
+
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = firebaseAuth.getCurrentUser();
     private DatabaseReference ref;
 
-   // private DatabaseReference ref =
-     //       FirebaseDatabase.getInstance().getReference().child("task").child("7WqvfYxioHPDI4NQySdQcjJbV3Z2");
+    // private DatabaseReference ref =
+    //       FirebaseDatabase.getInstance().getReference().child("task").child("7WqvfYxioHPDI4NQySdQcjJbV3Z2");
 
     private static class ViewHolder {
         TextView task_title;
         TextView task_uid;
         TextView task_description;
         TextView start_date, start_time, end_date, end_time;
-        Button edit_button, delete_button;
+        Button edit_button;
+        Button delete_button;
         TextView location;
     }
 
@@ -59,7 +62,7 @@ public class AllTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.task_item_layout, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.all_task_items_layout, parent, false);
 
             viewHolder.task_title = (TextView) convertView.findViewById(R.id.task_title);
             viewHolder.task_uid = (TextView) convertView.findViewById(R.id.task_uid);
@@ -85,51 +88,65 @@ public class AllTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
 
         // Populate the data into the template view using the data object
         viewHolder.task_title.setText(taskItem.title);
-        viewHolder.task_uid.setText("Owned by: " + taskItem.owner_uid);
+
+        if (user.getUid().equals(taskItem.owner_uid)) {
+            viewHolder.task_uid.setText("Owner: You");
+        } else {
+            viewHolder.task_uid.setText("Owner: " + taskItem.owner_uid);
+        }
+
+
         viewHolder.task_description.setText(taskItem.descriptionText);
 
-        viewHolder.start_date.setText("Starts " + taskItem.taskDate.start_date);
-        viewHolder.start_time.setText(" @ " + taskItem.taskDate.start_time);
-        viewHolder.end_date.setText("Due " + taskItem.taskDate.end_date);
-        viewHolder.end_time.setText(" @ " + taskItem.taskDate.end_time);
+        viewHolder.start_date.setText(" @ " + taskItem.taskDate.start_date);
+        viewHolder.start_time.setText(taskItem.taskDate.start_time);
+        viewHolder.end_date.setText(" @ " + taskItem.taskDate.end_date);
+        viewHolder.end_time.setText(taskItem.taskDate.end_time);
 
         viewHolder.location.setText(taskItem.taskPosition.toString());
 
-        //convertView.setTag(taskItem);
-        // Attach the click event handler
-        viewHolder.edit_button.setTag(position);
-        viewHolder.edit_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Access user from within the tag
-                int position = (Integer) view.getTag();
-                TaskItem taskItem = getItem(position);
-                // Do what you want here...
-                Intent intent = new Intent(getContext().getApplicationContext(), AddItemActivity.class);
+        viewHolder.delete_button.setVisibility(View.GONE);
+        viewHolder.edit_button.setVisibility(View.GONE);
 
-                intent.putExtra("TASK_ID",taskItem.task_id);
-                view.getContext().startActivity(intent);
+        if (user.getUid().toString().equals(taskItem.owner_uid)) {
+            viewHolder.delete_button.setVisibility(View.VISIBLE);
+            viewHolder.edit_button.setVisibility(View.VISIBLE);
+            //convertView.setTag(taskItem);
+            // Attach the click event handler
+            viewHolder.edit_button.setTag(position);
+            viewHolder.edit_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Access user from within the tag
+                    int position = (Integer) view.getTag();
+                    TaskItem taskItem = getItem(position);
+                    // Do what you want here...
+                    Intent intent = new Intent(getContext().getApplicationContext(), AddItemActivity.class);
 
-                //Toast.makeText(getContext(), "taSuccess? "+ taskItem.title, Toast.LENGTH_LONG).show();
-            }
-        });
+                    intent.putExtra("TASK_ID", taskItem.task_id);
+                    view.getContext().startActivity(intent);
 
-        viewHolder.delete_button.setTag(position);
-        viewHolder.delete_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Access user from within the tag
-                int position = (Integer) view.getTag();
-                TaskItem taskItem = getItem(position);
-
-                try {
-                    Toast.makeText(getContext(), "Removing: "+ taskItem.title, Toast.LENGTH_LONG).show();
-                    ref.child(taskItem.title).removeValue();
-                }catch (Exception e){
-                    Toast.makeText(getContext(), "Could not remove: "+ taskItem.title, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getContext(), "taSuccess? "+ taskItem.title, Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
+
+            viewHolder.delete_button.setTag(position);
+            viewHolder.delete_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Access user from within the tag
+                    int position = (Integer) view.getTag();
+                    TaskItem taskItem = getItem(position);
+
+                    try {
+                        Toast.makeText(getContext(), "Removing: " + taskItem.title, Toast.LENGTH_LONG).show();
+                        ref.child(taskItem.title).removeValue();
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), "Could not remove: " + taskItem.title, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
 
         // Return the completed view to render on screen
         return convertView;

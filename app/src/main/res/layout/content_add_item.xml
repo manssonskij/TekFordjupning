@@ -13,19 +13,45 @@
     tools:context="manssonskij.tekfordjupning.AddItemActivity"
     tools:showIn="@layout/activity_add_item">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/uid_and_tag_bar"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/taskItemUserName"
-        />
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskItemUserName"
+            android:drawableLeft="@drawable/ic_person_black_24dp"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:src="@drawable/ic_local_offer_black_24dp" />
+        <Spinner
+
+            android:layout_weight="1"
+            android:id="@+id/tag_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"/>
+
+
+    </LinearLayout>
 
     <EditText
+        android:drawableLeft="@drawable/ic_label_outline_black_24dp"
+        android:layout_below="@id/uid_and_tag_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/taskItemTitle"
         android:hint="@string/enter_title"
         android:inputType="textCapSentences"
         android:maxLines="1"  />
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,6 +61,7 @@
         android:layout_below="@+id/taskItemTitle">
 
     <Button
+        android:drawableLeft="@drawable/ic_event_note_black_24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pick_start_date_string"
@@ -44,6 +71,7 @@
         style="@android:style/Widget.Holo.Spinner"/>
 
     <Button
+        android:drawableLeft="@drawable/ic_schedule_black_24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pick_start_time_string"
@@ -61,7 +89,9 @@
         android:layout_below="@+id/date_time_bar">
 
     <Button
-        android:layout_width="match_parent"
+
+        android:drawableLeft="@drawable/ic_event_busy_black_24dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pick_end_date_string"
         android:onClick="showEndDatePickerDialog"
@@ -70,7 +100,8 @@
         style="@android:style/Widget.Holo.Spinner"/>
 
     <Button
-        android:layout_width="match_parent"
+        android:drawableLeft="@drawable/ic_access_alarm_black_24dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pick_end_time_string"
         android:onClick="showEndTimePickerDialog"
@@ -78,13 +109,39 @@
         android:id="@+id/time_end_Button"
         style="@android:style/Widget.Holo.Spinner"/>
     </LinearLayout>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_insert_comment_black_24dp"
+
+        android:layout_below="@id/date_time_bar_end"
+        android:id="@+id/noteTitle"/>
+    <EditText
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:lines="6"
+        android:hint="Enter description"
+        android:gravity="top|left"
+        android:layout_below="@+id/noteTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="13dp"
+        android:id="@+id/taskItemDescription" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/location_layout"
-        android:layout_below="@+id/date_time_bar_end">
+
+        android:layout_above="@+id/button_bar">
         <TextView
+            android:drawableStart="@drawable/ic_place_black_24dp"
             android:id="@+id/latitude_text_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,21 +150,23 @@
             android:layout_weight="1"
 
             />
+
         <TextView
             android:id="@+id/latitude_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_margin"
-            android:layout_weight="1"
+            android:layout_weight="2"
 
             />
+
         <TextView
             android:id="@+id/longitude_text_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_margin"
             android:layout_weight="1"
-            android:text=": "
+            android:text="Longitude: "
             />
 
         <TextView
@@ -116,39 +175,28 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_margin"
             android:textIsSelectable="true"
-            android:layout_weight="1"
+            android:layout_weight="2"
             />
     </LinearLayout>
-
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:lines="6"
-        android:hint="Enter description"
-        android:layout_below="@+id/date_time_bar_end"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="13dp"
-        android:id="@+id/taskItemDescription" />
 
      <LinearLayout
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/input_register"
-        android:backgroundTintMode="multiply"
+         android:id="@+id/button_bar"
+
+
         >
     <Button
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Clear data"
+        android:drawableLeft="@drawable/ic_delete_black_24dp"
         android:id="@+id/clearButton"
         android:layout_alignParentEnd="false"
-        android:background="@color/btn_logut_bg"/>
+/>
     <Button
         android:layout_weight="1"
         android:layout_width="wrap_content"
@@ -156,7 +204,8 @@
         android:text="Save task"
         android:id="@+id/saveButton"
         android:layout_alignParentEnd="true"
-        android:background="@color/btn_login"
+        android:drawableStart="@drawable/ic_note_add_black_24dp"
+        style="@style/Widget.AppCompat.Button"
         />
     </LinearLayout>
 </RelativeLayout>

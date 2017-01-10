@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -59,7 +58,7 @@ public class MyTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.task_item_layout, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.my_task_item_layout, parent, false);
 
             viewHolder.task_title = (TextView) convertView.findViewById(R.id.task_title);
             viewHolder.task_uid = (TextView) convertView.findViewById(R.id.task_uid);
@@ -85,13 +84,13 @@ public class MyTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
 
         // Populate the data into the template view using the data object
         viewHolder.task_title.setText(taskItem.title);
-        viewHolder.task_uid.setText("Owned by: " + taskItem.owner_uid);
+        viewHolder.task_uid.setText("Owner: " + taskItem.owner_uid);
         viewHolder.task_description.setText(taskItem.descriptionText);
 
-        viewHolder.start_date.setText("Starts " + taskItem.taskDate.start_date);
-        viewHolder.start_time.setText(" @ " + taskItem.taskDate.start_time);
-        viewHolder.end_date.setText("Due " + taskItem.taskDate.end_date);
-        viewHolder.end_time.setText(" @ " + taskItem.taskDate.end_time);
+        viewHolder.start_date.setText(" @ " + taskItem.taskDate.start_date);
+        viewHolder.start_time.setText(taskItem.taskDate.start_time);
+        viewHolder.end_date.setText(" @ " + taskItem.taskDate.end_date);
+        viewHolder.end_time.setText(taskItem.taskDate.end_time);
 
         viewHolder.location.setText(taskItem.taskPosition.toString());
 
@@ -124,7 +123,7 @@ public class MyTaskItemArrayAdapter extends ArrayAdapter<TaskItem> {
 
                 try {
                     Toast.makeText(getContext(), "Removing: "+ taskItem.title, Toast.LENGTH_LONG).show();
-                    ref.child(taskItem.title).removeValue();
+                    ref.child(taskItem.task_id).removeValue();
                 }catch (Exception e){
                     Toast.makeText(getContext(), "Could not remove: "+ taskItem.title, Toast.LENGTH_LONG).show();
                 }

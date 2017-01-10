@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import manssonskij.tekfordjupning.Objects.TaskDate;
@@ -46,6 +49,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AddItemActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener {
 
+    private static final String TAG = "AddItemActivity";
+
     private EditText taskItemTitle_editText, taskItemDescription_editText;
     private Button date_end_button, date_start_button, time_end_button, time_start_button, location_button;
     private TextView mLatitudeText, mLongitudeText;
@@ -56,7 +61,6 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser user;
-    private static final String TAG = "AddItemActivity";
 
     private String task_edit_id;
 
@@ -107,7 +111,6 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         }
 
 
-
         findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,17 +120,17 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
             }
         });
 
-        findViewById(R.id.clearButton).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.clearButton).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 taskItemTitle_editText.setText("");
                 date_start_button.setText("Start date");
                 time_start_button.setText("Start time");
                 date_end_button.setText("End date");
                 time_end_button.setText("End time");
 
-                //mLatitudeText.setText(String.valueOf(item.taskPosition.latitude));
-                //mLongitudeText.setText(String.valueOf(item.taskPosition.longitude));
+                mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+                mLongitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
 
                 taskItemDescription_editText.setText("");
             }
@@ -155,6 +158,18 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
                 // ...
             }
         };
+
+String[] tag_list={"Critical", "Major", "Normal","Minor","Sleep"};
+        ArrayList<String> tag_items_array = new ArrayList<String>();
+        for (String tag : tag_list){
+            tag_items_array.add(tag);
+        }
+
+        Spinner spinner = (Spinner) findViewById(R.id.tag_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tag_items_array);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
     }
 
     private void checkEditParameter() {
@@ -185,6 +200,7 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
     }
 
     private void loadTaskItemValuesIntoView(TaskItem item) {
+
         taskItemTitle_editText.setText(item.title);
         date_start_button.setText(item.taskDate.start_date);
         time_start_button.setText(item.taskDate.start_time);
@@ -234,20 +250,24 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
     private boolean createTaskItem() {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //DateFormat.getTimeInstance().format(new Date());
+        //Date date = new Date();
+        //System.date.getTime();
 
-        // creation time
-        DateFormat.getTimeInstance().format(new Date());
+        TaskPosition taskPosition;
+        try {
+            taskPosition = new TaskPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        } catch (NullPointerException e){
+            taskPosition = new TaskPosition(0.0,0.0);
+        }
 
+
+        TaskDate taskDate = new TaskDate(start_date, end_date, start_time, end_time);
 
         try {
-            TaskPosition taskPosition = new TaskPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            TaskDate taskDate = new TaskDate(start_date, end_date, start_time, end_time);
-            //String owner_uid, String title, Date start_date, Date end_date, String start_time, String end_time, String descriptionText
-            TaskItem task = new TaskItem(user.getUid(), user.getEmail(), title, taskDescription, taskDate, taskPosition);
-            //TaskItem task = new TaskItem(taskId, title, taskDesmLastLocationcription);
-
-            mDatabase.child("task").child(user.getUid()).child(title).setValue(task);
+            String key = mDatabase.child("task").child(user.getUid()).push().getKey();
+            TaskItem task = new TaskItem(key, user.getUid(), user.getEmail(), title, taskDescription, taskDate, taskPosition);
+            mDatabase.child("task").child(user.getUid()).child(key).setValue(task);
 
         } catch (Exception e) {
             Log.d(TAG, "Some kind of error");
@@ -257,11 +277,22 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         return true;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+
+    }
 
     @Override
     public void onStart() {
-        mGoogleApiClient.connect();
+
         super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
         mAuth.addAuthStateListener(mAuthListener);
 
     }
@@ -275,10 +306,6 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         }
     }
 
-
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -288,6 +315,7 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
 
     public void signout(MenuItem item) {
         FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(AddItemActivity.this, MainActivity.class));
     }
 
     @Override
@@ -307,6 +335,11 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
         if (mLastLocation != null) {
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+        }
+        // if no data exist put zero zero as location to indicate lack of data
+        if (mLastLocation == null) {
+            mLatitudeText.setText("0.0");
+            mLongitudeText.setText("0.0");
         }
     }
 
@@ -342,6 +375,12 @@ public class AddItemActivity extends AppCompatActivity implements ConnectionCall
     public void showEndTimePickerDialog(View v) {
         DialogFragment newFragment = new EndTimePickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void aboutFragment(MenuItem item) {
+        AboutFragment newFragment = new AboutFragment();
+        newFragment.show(getSupportFragmentManager(), "aboutFragment");
+
     }
 }
 

@@ -1,10 +1,10 @@
-package manssonskij.tekfordjupning;
+package manssonskij.tekfordjupning.Objects;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Anton on 2017-01-03.
+ * Created by Anton on 2017-01-01.
  */
 public class ContactList {
 

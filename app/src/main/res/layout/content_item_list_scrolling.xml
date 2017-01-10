@@ -7,23 +7,23 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="manssonskij.tekfordjupning.MyTaskListActivity"
     tools:showIn="@layout/activity_item_list"
-    android:id="@+id/nested_scroll_view">
+    android:id="@+id/nested_scroll_view"
+    android:background="@drawable/ic_light_pattern"
+    >
 
     <LinearLayout
         android:id="@+id/item_list_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+>
 
         <ListView
             android:id="@+id/listView"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
+            android:layout_width="match_parent">
 
         </ListView>
-
-
-
 
     </LinearLayout>
 </RelativeLayout>

@@ -14,27 +14,6 @@
     tools:showIn="@layout/activity_main"
     >
 
-    <ImageView
-        app:srcCompat="@drawable/auth"
-        android:id="@+id/imageView"
-        android:adjustViewBounds="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|fill_horizontal"
-        android:cropToPadding="false"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
-    <AutoCompleteTextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/prompt_email"
-        android:inputType="textEmailAddress"
-        android:maxLines="1"
-        android:layout_below="@+id/mUserName"
-        />
-
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
@@ -58,7 +37,7 @@
         android:layout_below="@+id/password"/>
 
     <Button
-        android:text="Register"
+        android:text="Sign up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -71,10 +50,31 @@
 
     <TextView
         android:id="@+id/mUserName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/teknikf_rdjupning"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true" />
+
+    <AutoCompleteTextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_email"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:layout_below="@+id/mUserName"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        app:srcCompat="@drawable/auth"
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|fill_horizontal"
+        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/imageView"/>
+        android:adjustViewBounds="true" />
 
 </RelativeLayout>
